@@ -1,9 +1,11 @@
 import { Routes, Route, useLocation, useParams, useMatch } from "react-router";
-import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { useQuery } from "react-query";
 import styled from "styled-components";
 import Price from "./Prics";
 import Chart from "./Chart";
 import { Link } from "react-router-dom";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -97,31 +99,35 @@ export interface Usd {
 }
 
 function Coin() {
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams();
   const { state } = useLocation();
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
+
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
   console.log(priceMatch);
 
-  useEffect(() => {
-    (async () => {
-      const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, []);
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () =>
+    fetchCoinInfo(coinId),
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000,
+    },
+  );
+
+  const loading = infoLoading || tickersLoading;
 
   return (
     <Container>
+      <Helmet>
+        <title>{state?.name}</title>
+      </Helmet>
       <Header>
         <Title>Coins {state?.name || "Loading..."} </Title>
+        <div>Price: {tickersData?.quotes.USD.price}</div>
+        <div>Total Supply: {tickersData?.total_supply}</div>
       </Header>
       {loading ? <Loader>"Loading..."</Loader> : null}
       <Tab isActive={priceMatch !== null}>
@@ -132,7 +138,7 @@ function Coin() {
       </Tab>
       <Routes>
         <Route path="price" element={<Price />} />
-        <Route path="chart" element={<Chart />} />
+        <Route path="chart" element={<Chart coinId={coinId} />} />
       </Routes>
     </Container>
   );
