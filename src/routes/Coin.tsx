@@ -98,7 +98,11 @@ export interface Usd {
   percent_from_price_ath: number;
 }
 
-function Coin() {
+interface ICoinProps {
+  isDark: boolean;
+}
+
+function Coin({ isDark }: ICoinProps) {
   const { coinId } = useParams();
   const { state } = useLocation();
 
@@ -138,7 +142,7 @@ function Coin() {
       </Tab>
       <Routes>
         <Route path="price" element={<Price />} />
-        <Route path="chart" element={<Chart coinId={coinId} />} />
+        <Route path="chart" element={<Chart coinId={coinId} isDark={isDark} />} />
       </Routes>
     </Container>
   );
