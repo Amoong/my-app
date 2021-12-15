@@ -1,8 +1,6 @@
 import React from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { createGlobalStyle } from "styled-components";
-import { hourSelector, minuteState } from "./atoms";
-import TodoList from "./components/TodoList";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;1,300&display=swap');
@@ -67,22 +65,34 @@ table {
 `;
 
 function App() {
-  const [minutes, setMinutes] = useRecoilState(minuteState);
-  const [hours, setHours] = useRecoilState(hourSelector);
-
-  const onMinutesChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setMinutes(+event.currentTarget.value);
-  };
-
-  const onHoursChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setHours(+event.currentTarget.value);
-  };
+  const onDragEnd = () => {};
   return (
     <>
       <GlobalStyle />
-      <input value={minutes} onChange={onMinutesChange} type="number" placeholder="Minutes" />
-      <input type="number" placeholder="Hours" value={hours} onChange={onHoursChange} />
-      {/* <TodoList /> */}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div>
+          <Droppable droppableId="one">
+            {magic => (
+              <ul ref={magic.innerRef} {...magic.droppableProps}>
+                <Draggable draggableId="first" index={0}>
+                  {magic => (
+                    <li ref={magic.innerRef} {...magic.draggableProps}>
+                      <span {...magic.dragHandleProps}>🐥</span>one
+                    </li>
+                  )}
+                </Draggable>
+                <Draggable draggableId="second" index={1}>
+                  {magic => (
+                    <li ref={magic.innerRef} {...magic.draggableProps} {...magic.dragHandleProps}>
+                      two
+                    </li>
+                  )}
+                </Draggable>
+              </ul>
+            )}
+          </Droppable>
+        </div>
+      </DragDropContext>
     </>
   );
 }
