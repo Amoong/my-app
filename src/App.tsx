@@ -18,58 +18,16 @@ const Box = styled(motion.div)`
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const Circle = styled(motion.div)`
-  background-color: white;
-  height: 70px;
-  width: 70px;
-  border-radius: 50%;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
-  place-self: center;
-`;
-
 const boxVariants = {
-  start: {
-    opacity: 0,
-    scale: 0.5,
-  },
-  end: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      type: "spring",
-      duration: 0.5,
-      bounce: 0.3,
-      delayChildren: 0.5,
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const circleVariants = {
-  start: {
-    opacity: 0,
-    y: 10,
-  },
-  end: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      bounce: 0.3,
-      duration: 0.5,
-    },
-  },
+  hover: { scale: 1.5, rotateZ: 90 },
+  click: { scale: 1, borderRadius: "100px" },
+  drag: { backgroundColor: "rgb(24, 54, 100)", transition: { duration: 10 } },
 };
 
 function App() {
   return (
     <Wrapper>
-      <Box variants={boxVariants} initial="start" animate="end">
-        <Circle variants={circleVariants} />
-        <Circle variants={circleVariants} />
-        <Circle variants={circleVariants} />
-        <Circle variants={circleVariants} />
-      </Box>
+      <Box drag variants={boxVariants} whileHover="hover" whileDrag="drag" whileTap="click"></Box>
     </Wrapper>
   );
 }
