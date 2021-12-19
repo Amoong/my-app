@@ -11,13 +11,14 @@ const Card = styled.div<{ isDragging: boolean }>`
 `;
 
 interface IDragableCardProps {
-  toDo: string;
+  toDoId: number;
+  toDoText: string;
   index: number;
 }
 
-function DragableCard({ toDo, index }: IDragableCardProps) {
+function DragableCard({ toDoId, toDoText, index }: IDragableCardProps) {
   return (
-    <Draggable key={toDo} draggableId={toDo} index={index}>
+    <Draggable key={toDoId} draggableId={String(toDoId)} index={index}>
       {(magic, info) => (
         <Card
           isDragging={info.isDragging}
@@ -25,7 +26,7 @@ function DragableCard({ toDo, index }: IDragableCardProps) {
           {...magic.draggableProps}
           {...magic.dragHandleProps}
         >
-          {toDo}
+          {toDoText}
         </Card>
       )}
     </Draggable>

@@ -43,8 +43,8 @@ footer, header, hgroup, main, menu, nav, section {
 body {
   line-height: 1;
   font-family: 'Open Sans', sans-serif;
-  background-color: ${props => props.theme.bgColor};
-  color: ${props => props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
 }
 a {
   text-decoration: none;
@@ -93,10 +93,11 @@ function App() {
     }
 
     if (destination.droppableId === source.droppableId) {
-      setToDos(allBoards => {
+      setToDos((allBoards) => {
         const boardCopy = [...allBoards[source.droppableId]];
+        const taskObj = boardCopy[source.index];
         boardCopy.splice(source.index, 1);
-        boardCopy.splice(destination.index, 0, draggableId);
+        boardCopy.splice(destination.index, 0, taskObj);
 
         return {
           ...allBoards,
@@ -106,12 +107,13 @@ function App() {
     }
 
     if (destination.droppableId !== source.droppableId) {
-      setToDos(allBoards => {
+      setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
+        const taskObj = sourceBoard[source.index];
         sourceBoard.splice(source.index, 1);
 
         const destinationBoard = [...allBoards[destination.droppableId]];
-        destinationBoard.splice(destination.index, 0, draggableId);
+        destinationBoard.splice(destination.index, 0, taskObj);
 
         return {
           ...allBoards,
@@ -127,7 +129,7 @@ function App() {
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
           <Boards>
-            {Object.keys(toDos).map(boardId => (
+            {Object.keys(toDos).map((boardId) => (
               <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
             ))}
           </Boards>
